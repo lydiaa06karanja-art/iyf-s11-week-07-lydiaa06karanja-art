@@ -147,3 +147,29 @@ function handleAdd() {
 document.addEventListener("DOMContentLoaded", () => {
   renderTodos();
 });
+//SESSION STORAGE 
+const sessionForm = document.getElementById("sessionForm");
+if(sessionForm){
+  const sessionInputs = sessionForm.querySelectorAll("input");
+
+  // Load saved values on page load
+  sessionInputs.forEach(input => {
+    const saved = sessionStorage.getItem(`session_${input.name}`);
+    if (saved) input.value = saved;
+
+    // Save on every input
+    input.addEventListener("input", () => {
+      sessionStorage.setItem(`session_${input.name}`, input.value);
+    });
+  });
+
+  // Clear on submit
+  sessionForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    sessionInputs.forEach(input => {
+      sessionStorage.removeItem(`session_${input.name}`);
+    });
+    alert("Submitted! Session data cleared.");
+    sessionForm.reset();
+  });
+}
