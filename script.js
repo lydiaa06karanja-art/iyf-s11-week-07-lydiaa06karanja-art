@@ -221,3 +221,106 @@ function loadState() {
 
 // Call loadState on page load
 loadState();
+// SHOPPING CART 
+// Add products to your centralized state
+state.products = [
+  { id: 1, name: "Laptop", price: 999.99, image: "https://via.placeholder.com/80?text=Laptop" },
+  { id: 2, name: "Phone", price: 699.99, image: "https://via.placeholder.com/80?text=Phone" },
+  { id: 3, name: "Headphones", price: 199.99, image: "https://via.placeholder.com/80?text=Headphones" },
+];
+
+// Add cart to state if it doesn't exist
+if(!state.cart) state.cart = [];
+
+// Cart Functions
+function addToCart(productId) {
+  const existing = state.cart.find(item => item.productId === productId);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    state.cart.push({ productId, quantity: 1 });
+  }
+  setState({ cart: state.cart }); // uses your existing setState!
+}
+
+function updateQuantity(productId, quantity) {
+  if (quantity <= 0) return removeFromCart(productId);
+  const newCart = state.cart.map(item => 
+    item.productId === productId ? { ...item, quantity } : item
+  );
+  setState({ cart: newCart });
+}
+
+function removeFromCart(productId) {
+  setState({ cart: state.cart.filter(item => item.productId !== productId) });
+}
+
+function clearCart() {
+  setState({ cart: [] });
+}
+
+function getCartTotal() {
+  return state.cart.reduce((total, item) => {
+    const product = state.products.find(p => p.id === item.productId);
+    return total + (product.price * item.quantity);
+  }, 0);
+}
+
+function getCartCount() {
+  return state.cart.reduce((count, item) => count + item.quantity, 0);
+}
+
+function renderProducts() {
+  const productList = document.getElementById('product-list');
+  if(!productList) return;
+  productList.innerHTML = state.products.map(product => `
+    <div style="border:1px solid #ccc; padding:10px; margin:10px 0; display:flex; gap:10px;">
+      <img src="${product.image}" width="80">
+      <div>
+        <h4>${product.name}</h4>
+        <p>$${product.price.toFixed(2)}</p>
+        <button onclick="addToCart(${product.id})">Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCart() {
+  const cartDiv = document.getElementById('cart');
+  const totalSpan = document.getElementById('cart-total');
+  const countSpan = document.getElementById('cart-count');
+  if(!cartDiv) return;
+
+  if (state.cart.length === 0) {
+    cartDiv.innerHTML = "<p>Cart is empty</p>";
+  } else {
+    cartDiv.innerHTML = state.cart.map(item => {
+      const product = state.products.find(p => p.id === item.productId);
+      return `
+        <div style="display:flex; justify-content:space-between; margin:5px 0;">
+          <span>${product.name} - $${product.price.toFixed(2)}</span>
+          <div>
+            <button onclick="updateQuantity(${product.id}, ${item.quantity - 1})">-</button>
+            ${item.quantity}
+            <button onclick="updateQuantity(${product.id}, ${item.quantity + 1})">+</button>
+            <button onclick="removeFromCart(${product.id})">X</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  totalSpan.textContent = getCartTotal().toFixed(2);
+  countSpan.textContent = getCartCount();
+}
+
+// Update your existing render() to also render cart
+const oldRender = window.render;
+window.render = function() {
+  if(oldRender) oldRender(); // keeps todo rendering
+  renderProducts();
+  renderCart();
+}
+
+// Load state on start
+loadState();
+render();
