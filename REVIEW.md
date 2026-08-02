@@ -14,7 +14,12 @@ The review was done as part of the Collaborative Task: Peer Code Review. The aim
 
 # Areas for Improvement
 
-Ensure that some functions are designed in such a way that each function does one task.
+- Ensure that some functions are designed in such a way that each function does one task.
+- Ensure strict equality (===) is used instead of loose equality (==).
+- Add error handling for operations that may fail.
+- Check for unused variables or duplicate code.
+- Ensure event listeners and DOM queries are handled efficiently.
+- Add comments where complex logic needs explanation.
 
 ## Overall Feedback
 
