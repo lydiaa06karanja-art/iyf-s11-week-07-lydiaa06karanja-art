@@ -1,0 +1,14 @@
+{
+  "name": "todo-list-assignment",
+  "version": "1.0.0",
+  "description": "ESLint and Prettier setup for To-Do List - Task 14.4",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  }
+}
